@@ -108,10 +108,17 @@ class EventController extends Controller
     public function GetEvent(){
         $events_list = Event::orderBy('created_at', 'DESC')->get();
             foreach($events_list as $data):
+
+                if($data->category != null){
+                    $category = json_decode($data->category);
+                }else{
+                    $category = 'No Category Yet';
+                }
                 $events[] = [
                     'event_id'=>$data->id,
                     'event'=>$data->title,
                     'info'=>$data->info,
+                    'category'=>$category,
                     'image'=>asset($data['thumbnail']),
                     'qr_code'=>asset($data['qr_code']),
                     'start'=>$data->start_date,
