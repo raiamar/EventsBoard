@@ -24,8 +24,8 @@ Route::group(['prefix'=>'v1'], function (){
         Route::get('pre-booking-list', 'PreBookingList');
     });
 
-    Route::controller(ParticipantController::class)->middleware('auth:sanctum')->group(function(){
-        //
+    Route::controller(ParticipantController::class)->group(function(){
+        Route::post('receive-participant-form', 'ReceiveParticipantForm');
     });
 
 });

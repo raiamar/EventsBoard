@@ -92,6 +92,7 @@ class EventController extends Controller
                 'event'=>$data->title,
                 'info'=>$data->info,
                 'image'=>asset($data['thumbnail']),
+                'qr_code'=>asset($data['qr_code']),
                 'start'=>$data->start_date,
                 'end'=>$data->end_date,
                 'ticket_price'=>$data->ticket_price,
@@ -126,6 +127,7 @@ class EventController extends Controller
                     'pre_booking'=>$data->form_pre_booking,
                     'ticket_price'=>$data->form_ticket_price,
                     'address'=>$data->form_address,
+                    'form_fee'=>$data->form_fee,
                 ];
             endforeach;
         return response()->json([
@@ -208,8 +210,6 @@ class EventController extends Controller
                     'validation_error'=>$validator->messages(),
                 ]);
             }else{
-
-
                 $data = Event::findOrFail($request->event_id);
                 $data->user_id = Auth::user()->id;
                 $data->title = $request->title;
