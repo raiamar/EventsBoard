@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\UserController;
-
+use Laravel\Sanctum\Sanctum;
 
 Route::group(['prefix'=>'v1', 'as'=>'api.'], function (){
 
@@ -13,6 +13,8 @@ Route::group(['prefix'=>'v1', 'as'=>'api.'], function (){
         Route::middleware('auth:sanctum')->get('user-details/{id}', 'user_detail');
         Route::middleware('auth:sanctum')->post('make-vendor-request', 'make_vendor_request');
         Route::post('register', 'register')->name('register');
+        Route::post('change-profile/{id}', 'ChangeUserProfile')->middleware('auth:sanctum');
+        
     });
 
     

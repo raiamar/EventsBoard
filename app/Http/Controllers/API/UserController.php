@@ -11,7 +11,8 @@ use App\EventBoard\Helper;
 use App\Models\User;
 use App\Models\VendorRequest;
 use App\Http\Requests\API\VendorRequestValidation;
-use Auth;
+use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class UserController extends Controller
 {
@@ -20,6 +21,26 @@ class UserController extends Controller
         $this->helper = new Helper;
     }
 
+    public function ChangeUserProfile(Request $request, $id){
+        $user_data = User::find($id);
+        $validator = \Validator::make($request->all(), [
+            'new_profile' => 'required',
+        ]);
+
+        $old_image = $user_data->profile;
+
+        if(isset($old_image)){
+            // $this->helper->deleteOldImage($old_image);
+            $change_image = $this->helper->newImageUpload($request->new_profile, 'user-profile');
+            $user_data['profile'] = $change_image;
+        }
+
+        $user_data->update();
+        return response()->json([
+            'message'=>'profile updated',
+            $user_data
+        ]);
+    }
 
     public function register(Request $request){
 

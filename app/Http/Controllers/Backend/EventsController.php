@@ -13,13 +13,15 @@ use Carbon\Carbon;
 use App\Models\Event;
 use App\Models\Booking;
 use App\Models\Category;
-use Auth;
+use App\Models\Participant;
+use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class EventsController extends Controller
 {
     
     private $page = 'backend.pages.events.';
-
+    private $parti = 'backend.pages.participants.';
 
     function __construct(){
         $this->helper = new Helper;
@@ -28,7 +30,30 @@ class EventsController extends Controller
     public function has_many(){
         // $evetn=Event::with("child_category")->first();
     }
+    
 
+
+
+    /******************************Participants************************************/
+    public function EventsDetails(){
+        $data = Event::where([
+            ['user_id', Auth::user()->id],
+            ['status', 1]
+            ])->get();
+        return view($this->parti.'event_list', compact('data'));    
+    }
+
+    public function ParticipantDetails($id){
+
+        $page = 'Participant List';
+        $breadcrum  = 'Manage Event| Participants';
+        $event_name = Event::where('id',$id)->first();
+        $data = Participant::where([
+            ['event_id',$id],
+            ['orginizer_id', Auth::user()->id]
+        ])->paginate(20);
+        return view($this->parti.'participants_list', compact('data', 'page', 'event_name', 'breadcrum')); 
+    }
 
     public function EventList(){
         $page = 'Event List';

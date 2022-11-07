@@ -12,7 +12,8 @@ use App\EventBoard\Helper;
 use Carbon\Carbon;
 use App\Models\Event;
 use App\Models\Booking;
-use Auth;
+use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class EventController extends Controller
 {
@@ -27,7 +28,7 @@ class EventController extends Controller
             $validator = \Validator::make($request->all(), [
                 'details.*.prefix'=>'required',
                 'first_name.*.'=>'required',
-                'middle_name.*.'=>'sometimes',
+                'middle_name.*.'=>'required',
                 'last_name.*.'=>'required',
                 'contact.*.'=>'required|digits:10',
                 'email.*.'=>'required|email',
@@ -138,7 +139,7 @@ class EventController extends Controller
     public function CreateEvent(Request $request)
     {
         try{
-            $validator = \Validator::make($request->all(),[
+            $validator = Validator::make($request->all(),[
                 'title'=>'required|unique:events,title',
                 'info'=>'required',
                 'slug'=>'sometimes',
@@ -197,7 +198,7 @@ class EventController extends Controller
     public function UpdateEvent(Request $request)
     {
         try{
-            $validator = \Validator::make($request->all(),[
+            $validator = Validator::make($request->all(),[
                 'title'=>'required',
                 'info'=>'required',
                 'thumbnail'=>'required',

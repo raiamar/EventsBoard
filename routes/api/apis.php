@@ -26,6 +26,7 @@ Route::group(['prefix'=>'v1'], function (){
 
     Route::controller(ParticipantController::class)->group(function(){
         Route::post('receive-participant-form', 'ReceiveParticipantForm');
+        Route::get('event-participant/{id}', 'getParticipant');
     });
 
 });

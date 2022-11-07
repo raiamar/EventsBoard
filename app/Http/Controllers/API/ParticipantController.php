@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\EventBoard\Helper;
 use App\Models\Participant;
 use App\Models\Event;
+use Exception;
 
 class ParticipantController extends Controller
 {
@@ -17,8 +18,28 @@ class ParticipantController extends Controller
     }
 
 
+    public function getParticipant($id){
+        try{
+
+            $data= Participant::where('event_id',$id)->
+            where([
+                ['payment_conformation', 1],
+                ['conformation', 1]
+            ])->get();
+
+            return response()->json($data);
+
+        }catch(Exception $e){
+            $message = $e->getMessage();
+            return response()->json([
+                'error'=>$message,
+            ]);
+        }
+    }
+
 
     public function ReceiveParticipantForm(Request $request){
+        // dd($request->all());
 
         try{
             $validator = \Validator::make($request->all(), [
@@ -36,17 +57,19 @@ class ParticipantController extends Controller
                 'participant_guardian_details.*.guardian_name'=>'required',
                 'guardian_number.*.'=>'required|digits:10',
 
-                'gender'=>'required',
+                'gender'=>'sometimes',
                 'pp_image'=>'required',
                 'full_image'=>'required',
-                'payment_method'=>'required',
+                'payment_method'=>'sometimes',
             ]);
 
             if($validator->fails()){
+                // dd('no');
                 return response()->json([
                     'validation_error'=>$validator->messages(),
                 ]);
             }else{
+                // dd('yes');
 
 
                 $orginizer_id = Event::where('id', $request->event_id)->first();
