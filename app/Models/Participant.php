@@ -18,10 +18,10 @@ class Participant extends Model
     ];
 
 
-    protected $casts = [
-        'participant_details'=> 'array',
-        'participant_gaurdian'=> 'array',
-        'social_media'=> 'array',
-        'extra'=>'array',
-    ];
+    // protected $casts = [
+    //     'participant_details'=> 'array',
+    //     'participant_gaurdian'=> 'array',
+    //     'social_media'=> 'array',
+    //     'extra'=>'array',
+    // ];
 }
