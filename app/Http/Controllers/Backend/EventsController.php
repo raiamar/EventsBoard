@@ -19,50 +19,71 @@ use Exception;
 
 class EventsController extends Controller
 {
-    
+
     private $page = 'backend.pages.events.';
     private $parti = 'backend.pages.participants.';
 
-    function __construct(){
+    function __construct()
+    {
         $this->helper = new Helper;
     }
 
-    public function has_many(){
+    public function has_many()
+    {
         // $evetn=Event::with("child_category")->first();
     }
-    
+
 
 
 
     /******************************Participants************************************/
-    public function EventsDetails(){
+    public function EventsDetails()
+    {
         $data = Event::where([
             ['user_id', Auth::user()->id],
             ['status', 1]
-            ])->get();
-        return view($this->parti.'event_list', compact('data'));    
+        ])->get();
+
+        // $data = Participant::all();
+        // $data->load('event');
+
+
+        return view($this->parti . 'event_list', compact('data'));
     }
 
-    public function ParticipantDetails($id){
+    public function ParticipantDetails($id)
+    {
 
         $page = 'Participant List';
         $breadcrum  = 'Manage Event| Participants';
-        $event_name = Event::where('id',$id)->first();
-        $data = Participant::where([
-            ['event_id',$id],
-            ['orginizer_id', Auth::user()->id]
-        ])->paginate(20);
-        return view($this->parti.'participants_list', compact('data', 'page', 'event_name', 'breadcrum')); 
+        $event_name = Event::where('id', $id)->first();
+        // $data = Participant::where([
+        //     ['event_id', $id],
+        //     ['orginizer_id', Auth::user()->id]
+        // ])->paginate(20);
+        $data = Participant::where('event_id', $id)->orderBy('id', 'DESC')->paginate(20);
+        // dd($data);
+
+        return view($this->parti . 'participants_list', compact('data', 'page', 'event_name', 'breadcrum'));
     }
 
-    public function EventList(){
+    public function viewParticipantDetails($id)
+    {
+        $page = 'Participant List';
+        $breadcrum  = 'Participant Details';
+        $participant = Participant::findOrFail($id);
+        return view('backend.pages.participants.participants-details', compact('participant','breadcrum'));
+    }
+
+    public function EventList()
+    {
         $page = 'Event List';
         $breadcrum  = 'Manage Event| Event';
         $event_list = Event::orderBy('created_at', 'DESC')->where([
             ['status', 1],
             ['user_id', Auth::user()->id]
         ])->paginate(20);
-        return view($this->page.'list', compact('page', 'breadcrum', 'event_list'));
+        return view($this->page . 'list', compact('page', 'breadcrum', 'event_list'));
     }
 
     public function CreateEvent()
@@ -72,8 +93,8 @@ class EventsController extends Controller
         $category = Category::orderBy('created_at', 'DESC')->where([
             ['status', 1],
             ['orginizer_id', Auth::user()->id]
-            ])->get();
-        return view($this->page.'create', compact('page', 'breadcrum', 'category'));
+        ])->get();
+        return view($this->page . 'create', compact('page', 'breadcrum', 'category'));
     }
 
     // EventRequest
@@ -81,8 +102,8 @@ class EventsController extends Controller
     public function ManageEvent(Request $request)
     {
 
-        try{
-            
+        try {
+
             $valid_from = Carbon::parse($request->start_date);
             $valid_till = Carbon::parse($request->end_date);
 
@@ -103,54 +124,52 @@ class EventsController extends Controller
             //     endif;
             // }
 
-            if($request->thumbnail):
+            if ($request->thumbnail) :
                 $thumbnail = $this->helper->newImageUpload($request->thumbnail, 'Test-Event');
             endif;
 
 
-            if($request->qr_code):
+            if ($request->qr_code) :
                 $qr_code = $this->helper->newImageUpload($request->qr_code, 'Test-Event');
             endif;
 
             // dd($request->all());
 
             $event = Event::updateOrCreate(
-                ['id'=>$request->event_id],
+                ['id' => $request->event_id],
                 [
-                    'user_id'=>Auth::user()->id,
+                    'user_id' => Auth::user()->id,
                     'title' => $request->title,
                     'slug' => Str::slug($request->title, '-'),
                     'info' => $request->info,
-                    'thumbnail'=> $thumbnail,
-                    'qr_code'=> $qr_code,
-                    'address'=> $request->address,
-                    'form_fee'=>$request->form_fee,
-                    'ticket_price'=>$request->ticket_price,
-                    'pre_booking'=>$request->pre_booking,
-                    'category'=>json_encode($request->category),
-                    'start_date'=>$valid_from,
-                    'end_date'=>$valid_till,
+                    'thumbnail' => $thumbnail,
+                    'qr_code' => $qr_code,
+                    'address' => $request->address,
+                    'form_fee' => $request->form_fee,
+                    'ticket_price' => $request->ticket_price,
+                    'pre_booking' => $request->pre_booking,
+                    'category' => json_encode($request->category),
+                    'start_date' => $valid_from,
+                    'end_date' => $valid_till,
                 ]
             );
 
-           return to_route('event');
-
-        }catch(Exception $e){
+            return to_route('event');
+        } catch (Exception $e) {
             return $message = $e->getMessage();
         }
-
     }
 
 
-    public function EditEvent($id){
+    public function EditEvent($id)
+    {
         $data = Event::findOrFail($id);
         $page = 'Edit Event';
         $breadcrum  = 'Manage Event| Edit';
         $category = Category::orderBy('created_at', 'DESC')->where([
             ['status', 1],
             ['orginizer_id', Auth::user()->id]
-            ])->get();
-        return view($this->page.'edit', compact('page', 'breadcrum', 'category', 'data'));
+        ])->get();
+        return view($this->page . 'edit', compact('page', 'breadcrum', 'category', 'data'));
     }
-
 }
