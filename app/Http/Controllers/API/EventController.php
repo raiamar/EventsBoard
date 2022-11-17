@@ -12,6 +12,7 @@ use App\EventBoard\Helper;
 use Carbon\Carbon;
 use App\Models\Event;
 use App\Models\Booking;
+use App\Models\Participant;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 
@@ -43,7 +44,7 @@ class EventController extends Controller
                     'validation_error'=>$validator->messages(),
                 ]);
             }else{
-                             
+
                  // do {
                     $ticket_code = random_int(1000, 9999);
                 // } while (Booking::where("code", "=", $ticket_code)->first());
@@ -70,7 +71,7 @@ class EventController extends Controller
                     $bookings,
                 ]);
             }
-            
+
 
         }catch(Exception $e){
             $message = $e->getMessage();
@@ -101,7 +102,7 @@ class EventController extends Controller
             ];
         endforeach;
 
-        
+
         return response()->json([
             'data'=>$pre_bookings,
         ]);
@@ -178,7 +179,7 @@ class EventController extends Controller
                     $data['qr_code'] = $image;
                 endif;
 
-                
+
                 $data->save();
                 return response()->json([
                     'data'=>$data,
@@ -265,4 +266,6 @@ class EventController extends Controller
             'data'=>$data,
         ]);
     }
+
+
 }

@@ -167,4 +167,21 @@ class ParticipantController extends Controller
         $model->fill($data);
         return $model;
     }
+
+    public function getParticipantsEventWise($id)
+    {
+        try {
+
+            $data = Participant::where('event_id', $id)->get();
+            return response()->json([
+                'message' => 'details received now proceed to payment_method',
+                $data,
+            ]);
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            return response()->json([
+                'error' => $message,
+            ]);
+        }
+    }
 }

@@ -22,11 +22,13 @@ Route::group(['prefix'=>'v1'], function (){
         Route::post('update-event', 'UpdateEvent');
         Route::get('edit-event/{id}', 'EditEvent');
         Route::get('pre-booking-list', 'PreBookingList');
+
     });
 
     Route::controller(ParticipantController::class)->group(function(){
         Route::post('receive-participant-form', 'ReceiveParticipantForm');
         Route::get('event-participant/{id}', 'getParticipant');
+        Route::get('event/{id}','getParticipantsEventWise');
     });
 
 });
