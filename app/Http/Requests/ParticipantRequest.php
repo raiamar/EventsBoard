@@ -42,7 +42,7 @@ class ParticipantRequest extends FormRequest
             'social_media' => 'nullable',
             'extra' => 'nullable',
             'email' => 'nullable|unique:participants,email,' . $this->id,
-            'age' => 'required|numberic',
+            'age' => 'required',
             'height' => 'required',
             'weight' => 'nullable',
             'phone_no' => 'required',
